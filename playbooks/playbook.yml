@@ -1,9 +1,30 @@
+<<<<<<< HEAD
 # UPGRADE PACKAGES AND INSTALL JAVA-1.8 + CONSUL + NOMAD + VAULT + PIPENV
 
 - hosts: all
+=======
+# UPGRADE PACKAGES AND INSTALL JAVA-1.8 + CONSUL + NOMAD + PIP
+
+- hosts: server
+>>>>>>> 3f8102a8110d3303493dc2de478926d64c982781
   become: yes
   roles:
     - common
     - consul
+<<<<<<< HEAD
     - vault
     - nomad
+=======
+    - nomad
+
+###############################
+
+# INSTALL JAVA-1.8 and ES-5.6.8
+#- hosts: server
+#  gather_facts: true
+#  become: yes
+#  vars:
+#    java_home: /usr/lib/jvm/java-8-oracle/jre
+#  roles:
+#    - elasticsearch
+>>>>>>> 3f8102a8110d3303493dc2de478926d64c982781
