@@ -1,0 +1,83 @@
+---
+
+- name: Ensure unzip is installed
+  apt: name=unzip state=installed
+
+- name: Download Nomad binary
+  get_url:
+    url: "{{ nomad_url }}"
+    dest: "{{ nomad_download_dir }}"
+    remote_src: yes
+
+- name: Unzipping Nomad binary
+  command: unzip {{ nomad_download_dir }}/nomad_{{ nomad_version }}_linux_amd64.zip -d {{ nomad_install_dir }}
+
+- name: Create Nomad configuration directory
+  file:
+    path: "{{ nomad_config_dir }}"
+    owner: "{{ nomad_user }}"
+    group: "{{ nomad_group }}"
+    mode: 0755
+    state: directory
+
+- name: Create Nomad data directory
+  file:
+    path: "{{ nomad_data_dir }}"
+    owner: "{{ nomad_user }}"
+    group: "{{ nomad_group }}"
+    mode: 0755
+    state: directory
+
+- name: Create Nomad logs directory
+  file:
+    path: "{{ nomad_logs_dir }}"
+    owner: "{{ nomad_user }}"
+    group: "{{ nomad_group }}"
+    mode: 0755
+    state: directory
+
+- name: Make sure nomad.conf service does not exist
+  file:
+    state: absent
+    path: /etc/init/nomad.conf
+
+- name: Create nomad.conf service configuration
+  template:
+    src: nomad.conf.j2
+    dest: /etc/init/nomad.conf
+    owner: "{{ nomad_user }}"
+    group: "{{ nomad_group }}"
+    mode: 0644
+  notify: restart nomad
+
+- name: Create Nomad configuration file
+  template:
+    src: base.hcl.j2
+    dest: "{{ nomad_config_dir }}/base.hcl"
+    owner: "{{ nomad_user }}"
+    group: "{{ nomad_group }}"
+    mode: 0644
+  notify: restart nomad
+
+- name: Create Nomad server configuration file
+  template:
+    src: server.hcl.j2
+    dest: "{{ nomad_config_dir }}/server.hcl"
+    owner: "{{ nomad_user }}"
+    group: "{{ nomad_group }}"
+    mode: 0644
+  notify: restart nomad
+  when: nomad_server
+
+- name: Create Nomad client configuration file
+  template:
+    src: client.hcl.j2
+    dest: "{{ nomad_config_dir }}/client.hcl"
+    owner: "{{ nomad_user }}"
+    group: "{{ nomad_group }}"
+    mode: 0644
+  notify: restart nomad
+  when: nomad_client
+
+- name: Start Nomad service
+  service: name={{ nomad_service_name }} state=started enabled=yes

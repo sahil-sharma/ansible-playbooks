@@ -1,0 +1,46 @@
+---
+- name: Ensure unzip is installed (required by unarchive module)
+  apt: name=unzip state=present
+
+- name: Download Consul
+  get_url:
+    url: "{{ consul_url }}"
+    dest: "{{ consul_download_dir }}/consul.zip"
+
+- name: Unzip Consul to installation directory
+  command: unzip {{ consul_download_dir }}/consul.zip -d {{ consul_install_dir }}
+
+- name: Create Consul configuration directory
+  file:
+    path: "{{ consul_config_dir }}"
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
+    mode: 0755
+    state: directory
+
+- name: If consul.conf configuration already exists, remove it
+  file:
+    state: absent
+    path: /etc/init/consul.conf
+
+- name: Create consul.conf configuration
+  template:
+    src: consul.conf.j2
+    dest: /etc/init/consul.conf
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
+    mode: 0644
+  notify: restart consul
+
+
+- name: Create Consul configuration file
+  template:
+    src: consul.json.j2
+    dest: "{{ consul_config_dir }}/consul.json"
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
+    mode: 0644
+  notify: restart consul
+
+- name: Start consul service
+  service: name={{ consul_service_name }} state=started enabled=yes

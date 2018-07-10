@@ -1,0 +1,9 @@
+datacenter = "{{ nomad_datacenter }}"
+
+client {
+  enabled = true
+
+  options {
+    "driver.raw_exec.enable" = "1"
+  }
+}

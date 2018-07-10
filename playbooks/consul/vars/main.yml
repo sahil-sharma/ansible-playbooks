@@ -1,0 +1,13 @@
+---
+
+consul_url: https://releases.hashicorp.com/consul/{{ consul_version }}/consul_{{ consul_version }}_linux_amd64.zip
+consul_download_dir: /tmp
+consul_install_dir: /usr/bin
+consul_config_dir: /var/lib/consul/conf
+consul_data_dir: /var/lib/consul/data
+consul_logs_dir: /var/lib/consul/logs
+consul_log_file: "{{ consul_logs_dir }}/consul.log"
+consul_user: root
+consul_group: root
+consul_service_name: consul
+consul_datacenter: blr

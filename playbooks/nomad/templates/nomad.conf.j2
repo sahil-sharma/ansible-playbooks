@@ -1,0 +1,15 @@
+description "Nomad Service"
+
+start on (local-filesystems and net-device-up IFACE=eth0)
+stop on runlevel [!12345]
+
+respawn
+
+setuid {{ nomad_user }}
+setgid {{ nomad_group }}
+
+{% if nomad_client == 'true' %}
+exec {{ nomad_install_dir }}/nomad agent -config {{ nomad_config_dir }}/base.hcl -config {{ nomad_config_dir }}/client.hcl > {{ nomad_log_file }} 2>&1
+{% else %}
+exec {{ nomad_install_dir }}/nomad agent -config {{ nomad_config_dir }}/base.hcl -config {{ nomad_config_dir }}/server.hcl > {{ nomad_log_file }} 2>&1
+{% endif %}

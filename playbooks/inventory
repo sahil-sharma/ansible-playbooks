@@ -1,0 +1,19 @@
+# Vagrant hosts
+node1 ansible_host=192.168.50.31 ansible_ssh_host=192.168.50.31 ansible_ssh_common_args='-o StrictHostKeyChecking=no' ansible_ssh_private_key_file='./ssh-keys/server'
+node2 ansible_host=192.168.50.32 ansible_ssh_host=192.168.50.32 ansible_ssh_common_args='-o StrictHostKeyChecking=no' ansible_ssh_private_key_file='./ssh-keys/server'
+node3 ansible_host=192.168.50.33 ansible_ssh_host=192.168.50.33 ansible_ssh_common_args='-o StrictHostKeyChecking=no' ansible_ssh_private_key_file='./ssh-keys/server'
+
+[server]
+node1
+
+[server:vars]
+consul_bootstrap=true
+consul_server=true
+
+[client]
+node2
+node3
+
+[client:vars]
+nomad_client=true
+nomad_server=false

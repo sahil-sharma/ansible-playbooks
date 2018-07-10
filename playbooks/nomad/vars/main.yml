@@ -1,0 +1,13 @@
+---
+nomad_url: https://releases.hashicorp.com/nomad/{{ nomad_version }}/nomad_{{ nomad_version }}_linux_amd64.zip
+nomad_download_dir: /tmp
+nomad_install_dir: /usr/bin
+nomad_config_dir: /var/lib/nomad/conf
+nomad_data_dir: /var/lib/nomad/data
+nomad_logs_dir: /var/lib/nomad/logs
+nomad_log_file: "{{ nomad_logs_dir }}/nomad.log"
+nomad_user: root
+nomad_group: root
+nomad_service_name: nomad
+nomad_region: "blr"
+nomad_datacenter: "blr"
