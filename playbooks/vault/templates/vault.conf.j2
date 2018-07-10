@@ -1,0 +1,11 @@
+description "Vault Service"
+
+start on (local-filesystems and net-device-up IFACE=eth0)
+stop on runlevel [!12345]
+
+respawn
+
+setuid {{ vault_user }}
+setgid {{ vault_group }}
+
+exec vault server -config=/var/lib/vault/conf/vault_server.hcl log-level=debug

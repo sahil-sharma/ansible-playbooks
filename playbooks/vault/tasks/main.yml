@@ -1,0 +1,50 @@
+---
+- name: Ensure unzip is installed (required by unarchive module)
+  apt: name=unzip state=present
+
+- name: Download Vault
+  get_url:
+    url: "{{ vault_url }}"
+    dest: "{{ vault_download_dir }}/vault.zip"
+
+- name: Unzip Vault to installation directory
+  command: unzip {{ vault_download_dir }}/vault.zip -d {{ vault_install_dir }}
+
+- name: Setting up vault autocompletion
+  shell: vault -autocomplete-install
+
+- name: Create Vault configuration directory
+  file:
+    path: "{{ vault_config_dir }}"
+    owner: "{{ vault_user }}"
+    group: "{{ vault_group }}"
+    mode: 0755
+    state: directory
+
+- name: If vault.conf configuration already exists, remove it
+  file:
+    state: absent
+    path: /etc/init/vault.conf
+
+- name: Create vault.conf configuration
+  template:
+    src: vault.conf.j2
+    dest: /etc/init/vault.conf
+    owner: "{{ vault_user }}"
+    group: "{{ vault_group }}"
+    mode: 0644
+  notify: restart vault
+
+- name: Create Vault configuration file
+  template:
+    src: vault_server.hcl.j2
+    dest: "{{ vault_config_dir }}/vault_server.hcl"
+    owner: "{{ vault_user }}"
+    group: "{{ vault_group }}"
+    mode: 0644
+  notify: restart vault
+
+- name: Start vault service
+  service: name={{ vault_service_name }} state=started enabled=yes
+  environment:
+    VAULT_ADDR=http://{{ ansible_eth1.ipv4.address }}:8200

@@ -1,0 +1,6 @@
+---
+- name: restart vault
+  service: name={{ vault_service_name }} state=restarted
+
+- name: reload vault
+  service: name={{ vault_service_name }} state=reloaded

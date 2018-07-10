@@ -1,0 +1,11 @@
+---
+vault_url: https://releases.hashicorp.com/vault/{{ vault_version }}/vault_{{ vault_version }}_linux_amd64.zip
+vault_download_dir: /tmp
+vault_install_dir: /usr/bin
+vault_config_dir: /var/lib/vault/conf
+vault_data_dir: /var/lib/vault/data
+vault_logs_dir: /var/lib/vault/logs
+vault_log_file: /var/lib/vault/vault.log
+vault_user: root
+vault_group: root
+vault_service_name: vault
