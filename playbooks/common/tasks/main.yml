@@ -1,0 +1,66 @@
+---
+#- name: Update apt cache
+#  apt:
+#    update_cache: yes
+#
+#- name: Upgarding system packages
+#  apt:
+#    upgrade: dist
+#
+- name: Installing packages
+  become: yes
+  apt:
+    pkg: "{{ item }}"
+  with_items: 
+   - unzip
+   - tree
+   - python-markdown
+   - python-testresources
+   #- snapd
+  state: present
+
+#- name: Creating group "edge"
+#  group:
+#    name: "{{ groupname }}"
+#  become: true
+#
+#- name: Add user "edge"
+#  user:
+#    name: "{{ username }}"
+#    groups: "{{ groupname }}"
+#    password: "{{ user_password }}"
+#    shell: /bin/bash
+#    append: yes
+#    state: present
+#    createhome: yes
+#  become: true
+#
+- name: Downloading Java-1.8
+  unarchive:
+    src: http://192.168.50.101:5000/jdk-8u172-linux-x64.tar.gz
+    dest: "/root"
+    remote_src: yes
+#  owner: "{{ username }}"
+#  groups: "{{ groupname }}"
+
+#- name: Set JAVA_HOME ENV variable
+#  command: echo "export JAVA_HOME=/home/{{ username }}/jdk1.8.0_172" >> /home/{{ username }}/.bashrc && echo "PATH=$PATH:$JAVA_HOME/bin" >> /home/{{ username }}/.bashrc
+
+#- name: Source bashrc file
+#  become: yes
+#  shell: . /home/{{ username }}/.bashrc
+
+- name: Download pip
+  get_url:
+    url: https://bootstrap.pypa.io/get-pip.py
+    dest: "{{ pip_download_dir }}"
+#  owner: "{{ username }}"
+#  groups: "{{ groupname }}"
+
+- name: Installing pip
+  command: "python {{ pip_download_dir }}/get-pip.py"
+  become: yes
+
+- name: Installing pipenv
+  become: yes
+  command: pip install pipenv
